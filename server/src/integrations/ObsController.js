@@ -84,7 +84,7 @@ export class ObsController {
       this.#state.connected = true;
       this.#state.websocketVersion = obsWebSocketVersion;
       this.#state.lastError = null;
-      await this.refresh();
+      await this.#refreshUntilPopulated();
       this.#publish();
     } catch (err) {
       this.#state.connected = false;
@@ -108,6 +108,32 @@ export class ObsController {
   async dispose() {
     this.#disposed = true;
     await this.disconnect();
+  }
+
+  /**
+   * Recarrega o estado ate' as listas virem preenchidas.
+   *
+   * O obs-websocket aceita conexao antes de o OBS terminar de carregar a
+   * colecao de cenas. Quando isso acontece, `GetSceneList` responde vazio e o
+   * espelho local fica sem cenas nem entradas para sempre — o editor de teclas
+   * apareceria sem nenhuma cena para escolher. Algumas tentativas espacadas
+   * resolvem, e o custo e' nulo no caso normal, em que a primeira ja' vem cheia.
+   *
+   * @param {number} [attempts]
+   */
+  async #refreshUntilPopulated(attempts = 4) {
+    for (let attempt = 1; attempt <= attempts; attempt += 1) {
+      await this.refresh();
+      if (this.#state.scenes.length > 0) return this.#state;
+      if (attempt === attempts) break;
+      this.#logger.debug(`lista de cenas vazia; nova tentativa em ${attempt * 500}ms`);
+      await new Promise((resolve) => setTimeout(resolve, attempt * 500));
+      if (!this.#state.connected) break;
+    }
+    if (this.#state.scenes.length === 0) {
+      this.#logger.warn('OBS conectou mas nao devolveu nenhuma cena');
+    }
+    return this.#state;
   }
 
   /** Recarrega o estado completo do OBS (na conexao e sob demanda). */
