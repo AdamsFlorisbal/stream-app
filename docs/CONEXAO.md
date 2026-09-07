@@ -86,6 +86,45 @@ Para desfazer manualmente:
 .\usb-connect.ps1 -Remove
 ```
 
+### Quando o aparelho trava em `authorizing`, `offline` ou some da lista
+
+Se o tablet aparece em `adb devices` mas nunca chega ao estado `device`, e o
+aviso de autorização não surge nem com a tela desbloqueada, **provavelmente não
+é o Android**. Antes de mexer em Opções do desenvolvedor, colete a evidência:
+
+```powershell
+$adb = "..\server\data\tools\platform-tools\adb.exe"
+& $adb kill-server
+$env:ADB_TRACE = 'all'
+& $adb nodaemon server        # Ctrl+C depois de ~20 segundos
+```
+
+Procure no que for impresso:
+
+| O que aparece | O que significa |
+|---|---|
+| `usb_read failed: Error [31]` | link USB instável — **cabo ou porta** |
+| `Failed to get BOS header. Error: ... (31)` | falha de *control transfer*: camada física, não software |
+| `Kicking USB device` em repetição | a conexão cai e é refeita sem parar |
+| `packet <-- AUTH` seguido de silêncio | o handshake começa e é interrompido |
+
+O erro **31** (`ERROR_GEN_FAILURE`) aponta para hardware, nesta ordem de
+probabilidade:
+
+1. **Cabo** — o mais comum. Muitos cabos que acompanham tablets são otimizados
+   para carga e têm os pares de dados marginais. Teste outro cabo, de
+   preferência um que você saiba que transfere arquivos bem.
+2. **Hub ou painel frontal** — ligue direto na traseira da placa-mãe.
+3. **Porta USB 3.0 (xHCI)** — aparelhos MediaTek costumam ser sensíveis. Tente
+   uma porta USB 2.0.
+
+Um sinal útil: se o dispositivo MTP ("Transferência de arquivos") também aparece
+com status *Unknown* no Gerenciador de Dispositivos, o link está ruim para
+tudo — não só para o ADB.
+
+Nada disso impede o uso do deck: a conexão por **Wi-Fi** não depende do ADB, e a
+**ancoragem USB** (Opção C, abaixo) usa o mesmo cabo por outro caminho.
+
 ---
 
 ## Opção C — Ancoragem USB (sem adb)

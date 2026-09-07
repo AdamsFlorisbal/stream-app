@@ -19,7 +19,29 @@ watts e clocks.
 
 ---
 
-## Instalação (2 minutos)
+## Instalação automática (recomendado)
+
+```powershell
+cd tools
+.\instalar-sensores.ps1
+```
+
+O script baixa a última versão do LibreHardwareMonitor (pedindo sua
+confirmação), configura o servidor web na porta 8085, registra uma tarefa
+agendada que o inicia **com privilégio elevado no logon** — de modo que o aviso
+do UAC não reaparece a cada reinício — e o inicia imediatamente.
+
+Ele pede elevação uma única vez, para registrar a tarefa. Para desfazer:
+
+```powershell
+.\instalar-sensores.ps1 -Remove
+```
+
+Se preferir fazer à mão, o passo a passo está abaixo.
+
+---
+
+## Instalação manual
 
 ### 1. Baixe
 
@@ -111,6 +133,38 @@ em **Configurações › Sensores › URL do LibreHardwareMonitor**, ou direto e
   }
 }
 ```
+
+---
+
+## Armadilhas na leitura do `data.json`
+
+O formato do LibreHardwareMonitor tem três detalhes que quebram um parser
+ingênuo. Todos já estão tratados em `LibreHardwareMonitorProvider`, mas ficam
+registrados aqui porque reaparecem em qualquer código que consuma esse JSON.
+
+**1. Nem todo sensor em °C é uma temperatura.** Um SSD publica
+`Warning Temperature = 89 °C` e `Critical Temperature = 94 °C` — limites do
+fabricante, não leituras. A CPU publica `Distance to TjMax`, que é a *folga*
+térmica. Agregar por máximo sem filtrar faz a interface anunciar o disco a
+94 °C com a máquina ociosa. O provedor exclui esses nomes por
+`NOT_A_READING`.
+
+**2. Nós de memória se parecem, mas não servem para a mesma coisa.** Existem
+`Total Memory` (uso real da RAM física), `Virtual Memory` (inclui o arquivo de
+paginação) e um nó por pente (`DIMM #0`, `DIMM #2`) que só expõe capacidade e
+timings. Escolher pelo ícone `ram.png` pode cair num DIMM e reportar "16 GB em
+uso" quando 16 GB é apenas a capacidade daquele pente. A escolha é validada por
+capacidade: só serve o nó que tem um sensor `Memory` ou `Memory Used`.
+
+**3. Nomes de modelo colidem com padrões de chipset.** `Intel Arc B580` casa
+com uma expressão pensada para placas-mãe B550/B650, e a GPU acaba
+classificada como placa-mãe. A solução não é refinar a expressão, e sim
+classificar em ordem de precedência retirando do conjunto o nó que já foi
+reivindicado — assim a GPU nunca chega à etapa da placa-mãe.
+
+Vale notar que o nome do hardware pode ser inútil: uma CPU de engenharia se
+identifica como `Genuine Intel 0000`, sem modelo. Por isso o ícone
+(`images_icon/cpu.png`) entra como desempate.
 
 ---
 

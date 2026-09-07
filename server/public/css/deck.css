@@ -195,34 +195,82 @@ button { font: inherit; color: inherit; }
    Faixa de telemetria
    -------------------------------------------------------------------------- */
 
+/* Visor de status embutido no corpo do aparelho, acima das teclas. Usa a
+   mesma construcao da faixa de knobs — celulas coladas, separadas por 1px da
+   cor da borda — para que topo e base leiam como partes do mesmo objeto. */
 .telemetry {
   flex-shrink: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
-  gap: 8px;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 1px;
+  padding: 1px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
 }
 
 .stat {
   position: relative;
   overflow: hidden;
-  padding: 9px 12px 10px;
-  border-radius: 15px;
-  border: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.014));
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  min-width: 0;
+  padding: 8px 13px 10px;
+  background: linear-gradient(180deg, rgba(14, 18, 26, 0.94), rgba(6, 8, 13, 0.96));
 }
 
+/* Halo tenue na cor da metrica, como o das celulas de knob. */
+.stat::after {
+  content: "";
+  position: absolute;
+  inset: -45% -10% auto auto;
+  width: 110px; height: 110px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--tone, var(--accent)) 34%, transparent), transparent 70%);
+  filter: blur(24px);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* O conteudo fica acima do halo desenhado em .stat::after. */
+.stat__head, .stat__value, .stat__bar { position: relative; z-index: 1; }
+
 .stat__head { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 0.9px; text-transform: uppercase; }
-.stat__head svg { width: 13px; height: 13px; }
-.stat__sub { margin-left: auto; font-size: 10px; letter-spacing: 0; text-transform: none; opacity: 0.75; font-weight: 500; }
+.stat__head svg { width: 13px; height: 13px; color: var(--tone, var(--accent)); flex-shrink: 0; }
+.stat__sub { margin-left: auto; font-size: 10px; letter-spacing: 0; text-transform: none; opacity: 0.75; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .stat__value { display: flex; align-items: baseline; gap: 4px; margin-top: 3px; }
 .stat__number { font-size: 22px; font-weight: 650; letter-spacing: -0.6px; line-height: 1; }
 .stat__unit { font-size: 11px; color: var(--muted); }
-.stat__temp { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--muted); }
-.stat__temp.is-warm { color: #fbbf24; }
-.stat__temp.is-hot { color: #f87171; }
+/* A temperatura e' um dado de primeira classe, nao uma nota de rodape: ganha
+   uma pilula propria para nao se confundir com a porcentagem de carga ao lado.
+   A cor muda sozinha conforme esquenta. */
+.stat__temp {
+  margin-left: auto;
+  align-self: center;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.3px;
+  color: #dbe4f0;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  transition: color 0.4s var(--ease), background 0.4s var(--ease), border-color 0.4s var(--ease);
+}
+.stat__temp:empty { display: none; }
+
+.stat__temp.is-warm {
+  color: #fcd34d;
+  background: rgba(251, 191, 36, 0.14);
+  border-color: rgba(251, 191, 36, 0.34);
+}
+.stat__temp.is-hot {
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(239, 68, 68, 0.45);
+  box-shadow: 0 0 16px -3px rgba(239, 68, 68, 0.7);
+}
 
 .stat__bar { position: relative; height: 3px; margin-top: 8px; border-radius: 3px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
 .stat__fill {
@@ -695,13 +743,20 @@ button { font: inherit; color: inherit; }
    Telas estreitas (celular em pe')
    -------------------------------------------------------------------------- */
 
+@media (max-width: 720px) {
+  /* Em tela estreita as cinco celulas ficam ilegiveis lado a lado: viram
+     duas colunas, e disco/rede saem de cena antes de CPU, GPU e RAM. */
+  .telemetry { grid-auto-flow: row; grid-auto-columns: unset; grid-template-columns: repeat(2, 1fr); }
+  .stat:nth-child(n + 5) { display: none; }
+}
+
 @media (max-width: 560px) {
   .topbar__titles { display: none; }
-  .telemetry { grid-template-columns: repeat(2, 1fr); }
-  .strip { height: 74px; grid-auto-flow: row; grid-auto-columns: unset; grid-template-columns: repeat(2, 1fr); height: auto; }
+  .strip { grid-auto-flow: row; grid-auto-columns: unset; grid-template-columns: repeat(2, 1fr); height: auto; }
   .device { padding: 12px; }
 }
 
+/* Tablet deitado com pouca altura: as teclas tem prioridade sobre o visor. */
 @media (max-height: 520px) {
-  .telemetry { display: none; }
+  .telemetry { display: none !important; }
 }
