@@ -1,0 +1,24 @@
+# Dependencias
+node_modules/
+
+# Dados do usuario: configuracao, perfis e icones enviados.
+# Sao seus arquivos, nao pertencem ao repositorio.
+server/data/
+
+# Build do Android
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+*.apk
+*.aab
+*.keystore
+*.jks
+
+# Sistema / editores
+Thumbs.db
+Desktop.ini
+.DS_Store
+.vscode/
+*.log

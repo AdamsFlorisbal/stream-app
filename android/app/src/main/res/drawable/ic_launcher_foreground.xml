@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icone adaptativo: grade de teclas sobre a faixa de knobs. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <path android:fillColor="#22D3EE" android:pathData="M31,34 h14 a4,4 0 0 1 4,4 v14 a4,4 0 0 1 -4,4 h-14 a4,4 0 0 1 -4,-4 v-14 a4,4 0 0 1 4,-4 z" />
+    <path android:fillColor="#7DD9F5" android:pathData="M49,34 h14 a4,4 0 0 1 4,4 v14 a4,4 0 0 1 -4,4 h-14 a4,4 0 0 1 -4,-4 v-14 a4,4 0 0 1 4,-4 z" android:fillAlpha="0.75" />
+    <path android:fillColor="#A78BFA" android:pathData="M67,34 h14 a4,4 0 0 1 4,4 v14 a4,4 0 0 1 -4,4 h-14 a4,4 0 0 1 -4,-4 v-14 a4,4 0 0 1 4,-4 z" android:fillAlpha="0.85" />
+
+    <path android:fillColor="#A78BFA" android:pathData="M31,52 h14 a4,4 0 0 1 4,4 v14 a4,4 0 0 1 -4,4 h-14 a4,4 0 0 1 -4,-4 v-14 a4,4 0 0 1 4,-4 z" android:fillAlpha="0.6" />
+    <path android:fillColor="#22D3EE" android:pathData="M49,52 h14 a4,4 0 0 1 4,4 v14 a4,4 0 0 1 -4,4 h-14 a4,4 0 0 1 -4,-4 v-14 a4,4 0 0 1 4,-4 z" />
+    <path android:fillColor="#F472B6" android:pathData="M67,52 h14 a4,4 0 0 1 4,4 v14 a4,4 0 0 1 -4,4 h-14 a4,4 0 0 1 -4,-4 v-14 a4,4 0 0 1 4,-4 z" android:fillAlpha="0.8" />
+
+    <path android:fillColor="#0B0F16" android:pathData="M29,76 h50 a7,7 0 0 1 0,14 h-50 a7,7 0 0 1 0,-14 z" />
+    <path android:fillColor="#22D3EE" android:pathData="M40,83 m-3.5,0 a3.5,3.5 0 1,0 7,0 a3.5,3.5 0 1,0 -7,0" />
+    <path android:fillColor="#A78BFA" android:pathData="M54,83 m-3.5,0 a3.5,3.5 0 1,0 7,0 a3.5,3.5 0 1,0 -7,0" />
+    <path android:fillColor="#F472B6" android:pathData="M68,83 m-3.5,0 a3.5,3.5 0 1,0 7,0 a3.5,3.5 0 1,0 -7,0" />
+</vector>

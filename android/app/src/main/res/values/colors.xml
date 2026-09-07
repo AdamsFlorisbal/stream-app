@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="deck_background">#05070D</color>
+    <color name="deck_accent">#22D3EE</color>
+    <color name="deck_surface">#0D1117</color>
+</resources>

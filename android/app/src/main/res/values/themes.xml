@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.DeckControl" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@color/deck_background</item>
+        <item name="android:statusBarColor">@color/deck_background</item>
+        <item name="android:navigationBarColor">@color/deck_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="colorAccent">@color/deck_accent</item>
+    </style>
+</resources>

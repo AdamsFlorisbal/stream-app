@@ -1,0 +1,17 @@
+{
+  "name": "deck-control-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Servidor de controle estilo Stream Deck: atalhos, OBS, janelas e telemetria de hardware.",
+  "type": "module",
+  "main": "src/main.js",
+  "engines": { "node": ">=18.17" },
+  "scripts": {
+    "start": "node src/main.js",
+    "dev": "node --watch src/main.js"
+  },
+  "dependencies": {
+    "obs-websocket-js": "^5.0.6",
+    "ws": "^8.18.0"
+  }
+}

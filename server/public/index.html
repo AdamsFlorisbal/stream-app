@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no, maximum-scale=1">
+  <meta name="theme-color" content="#05070d">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Deck Control</title>
+  <link rel="manifest" href="/app.webmanifest">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icon.svg">
+  <link rel="stylesheet" href="/css/deck.css">
+</head>
+<body>
+  <!-- Fundo: nebulosa animada em camadas, como no painel de referencia. -->
+  <div class="aurora" aria-hidden="true">
+    <span class="aurora__blob aurora__blob--a"></span>
+    <span class="aurora__blob aurora__blob--b"></span>
+    <span class="aurora__blob aurora__blob--c"></span>
+    <span class="aurora__grid"></span>
+    <span class="aurora__vignette"></span>
+  </div>
+
+  <div class="shell" id="shell">
+
+    <header class="topbar">
+      <div class="topbar__brand">
+        <span class="topbar__mark" data-icon="deck"></span>
+        <div class="topbar__titles">
+          <strong>Deck Control</strong>
+          <span class="topbar__host" id="hostName">conectando…</span>
+        </div>
+      </div>
+
+      <div class="topbar__badges" id="badges">
+        <button class="badge badge--link" id="badgeLink" type="button">
+          <span class="badge__dot"></span><span class="badge__text">Conectando</span>
+        </button>
+        <button class="badge badge--obs" id="badgeObs" type="button">
+          <span class="badge__dot"></span><span class="badge__text">OBS</span>
+        </button>
+        <span class="badge badge--live" id="badgeLive" hidden>
+          <span class="badge__pulse"></span>AO VIVO
+        </span>
+        <span class="badge badge--rec" id="badgeRec" hidden>
+          <span class="badge__pulse"></span>REC <em id="recTimer">00:00</em>
+        </span>
+      </div>
+
+      <div class="topbar__tools">
+        <button class="icon-button" id="btnEdit" type="button" title="Modo edicao" aria-pressed="false">
+          <span data-icon="edit"></span>
+        </button>
+        <button class="icon-button" id="btnSettings" type="button" title="Configuracoes">
+          <span data-icon="settings"></span>
+        </button>
+        <button class="icon-button" id="btnFullscreen" type="button" title="Tela cheia">
+          <span data-icon="expand"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Faixa de telemetria: o "status do PC". -->
+    <section class="telemetry" id="telemetry" aria-label="Status do computador"></section>
+
+    <nav class="pages" id="pages" aria-label="Paginas do deck"></nav>
+
+    <!-- O aparelho: grade de teclas + faixa de knobs, no mesmo corpo. -->
+    <main class="device">
+      <div class="device__gloss" aria-hidden="true"></div>
+      <section class="grid" id="grid" aria-label="Teclas"></section>
+      <section class="strip" id="strip" aria-label="Controles giratorios"></section>
+    </main>
+
+  </div>
+
+  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+  <dialog class="sheet" id="sheet">
+    <div class="sheet__inner" id="sheetInner"></div>
+  </dialog>
+
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>

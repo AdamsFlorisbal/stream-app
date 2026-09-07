@@ -1,0 +1,55 @@
+name: Gerar APK
+
+# Compila o aplicativo Android na nuvem — assim voce nao precisa instalar
+# Android Studio nem o SDK na sua maquina. O APK sai como artefato do job.
+on:
+  push:
+    branches: [main, master]
+    paths: ['android/**', '.github/workflows/android.yml']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar o codigo
+        uses: actions/checkout@v4
+
+      - name: Instalar o JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Preparar o Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Preparar o Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          # O projeto nao versiona o gradle-wrapper.jar, entao a versao do
+          # Gradle e fixada aqui. Precisa ser >= 8.7 por causa do AGP 8.5.
+          gradle-version: '8.9'
+
+      - name: Compilar o APK de depuracao
+        working-directory: android
+        run: gradle assembleDebug --no-daemon --stacktrace
+
+      - name: Compilar o APK de release (nao assinado)
+        working-directory: android
+        run: gradle assembleRelease --no-daemon --stacktrace
+
+      - name: Publicar o APK instalavel
+        uses: actions/upload-artifact@v4
+        with:
+          name: deck-control-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+
+      - name: Publicar o APK de release
+        uses: actions/upload-artifact@v4
+        with:
+          name: deck-control-apk-release-unsigned
+          path: android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: warn

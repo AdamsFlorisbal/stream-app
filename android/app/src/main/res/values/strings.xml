@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Deck Control</string>
+    <string name="searching">Procurando o PC na rede e no cabo USB…</string>
+    <string name="connected_via">Conectado por %1$s</string>
+    <string name="transport_usb">cabo USB</string>
+    <string name="transport_wifi">Wi-Fi</string>
+    <string name="checking">Verificando %1$s…</string>
+    <string name="not_found_title">Servidor nao encontrado</string>
+    <string name="not_found_message">Confira se o Deck Control esta rodando no PC e se o tablet esta na mesma rede. Se preferir o cabo, ative a Depuracao USB e conecte-o.\n\nVoce tambem pode digitar o endereco manualmente:</string>
+    <string name="tried">Enderecos testados:</string>
+    <string name="connect">Conectar</string>
+    <string name="retry">Procurar de novo</string>
+    <string name="no_answer">Nenhuma resposta nesse endereco.</string>
+</resources>
