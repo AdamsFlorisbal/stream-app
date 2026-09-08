@@ -25,6 +25,7 @@ export class ApiController {
    * @param {import('../media/MediaLibrary.js').MediaLibrary} deps.media
    * @param {import('./UsbBridge.js').UsbBridge} deps.usb
    * @param {() => object} deps.gatewayInfo
+   * @param {(reason: string) => Promise<void>} deps.requestShutdown
    */
   constructor(deps) {
     this.#deps = deps;
@@ -36,6 +37,7 @@ export class ApiController {
 
     router.get('/api/health', () => this.health());
     router.get('/api/state', () => this.snapshot());
+    router.post('/api/system/shutdown', () => this.shutdownServer());
 
     router.get('/api/config', () => ({ ok: true, config: this.#deps.config.toPublicJSON() }));
     router.patch('/api/config', ({ body }) => this.updateConfig(body));
@@ -338,6 +340,20 @@ export class ApiController {
       buffer: body
     });
     return { ok: true, media: saved };
+  }
+
+  /**
+   * Encerra o servidor de forma graciosa. Usado pelo aplicativo de bandeja do
+   * Windows, que controla um processo sem console e por isso nao tem como
+   * mandar um Ctrl+C.
+   *
+   * O `setTimeout` da tempo da resposta HTTP chegar ao cliente antes do
+   * processo sair — encerrar dentro do proprio handler apagaria o socket no
+   * meio da escrita.
+   */
+  shutdownServer() {
+    setTimeout(() => void this.#deps.requestShutdown('http'), 150);
+    return { ok: true, message: 'encerrando' };
   }
 
   #publishDeck() {

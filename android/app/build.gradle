@@ -45,3 +45,15 @@ dependencies {
     implementation 'androidx.activity:activity:1.9.2'
     implementation 'androidx.core:core:1.13.1'
 }
+
+// O projeto e' Java puro, mas essas libs do AndroidX trazem o Kotlin stdlib
+// por baixo. Parte da arvore de dependencias ainda pede as variantes
+// separadas kotlin-stdlib-jdk7/jdk8 (1.6.21), que desde o Kotlin 1.8 vivem
+// dentro do proprio kotlin-stdlib — sem forcar a mesma versao, as duas
+// copias coexistem e o build falha com "Duplicate class kotlin.*".
+configurations.all {
+    resolutionStrategy {
+        force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22'
+        force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'
+    }
+}

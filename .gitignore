@@ -16,6 +16,9 @@ android/.idea/
 *.keystore
 *.jks
 
+# ...exceto o build pronto para baixar/instalar, em releases/.
+!/releases/*.apk
+
 # Sistema / editores
 Thumbs.db
 Desktop.ini

@@ -24,6 +24,57 @@ configuração manual de IP.
 
 Pré-requisito: [Node.js](https://nodejs.org) 18 ou superior.
 
+`iniciar.bat` deixa uma janela de terminal aberta o tempo todo. Para rodar sem
+essa janela, veja a seção **[Bandeja do sistema](#bandeja-do-sistema)** logo
+abaixo.
+
+---
+
+## Bandeja do sistema
+
+Alternativa ao `iniciar.bat` para quem deixa o Deck Control ligado o tempo
+todo: em vez de uma janela de terminal, ele vira um ícone discreto perto do
+relógio, com menu de clique direito.
+
+**Para usar**: dê dois cliques em **`Deck Control.exe`**, na raiz do projeto.
+Nenhuma janela aparece — nem de terminal, nem do PowerShell por trás.
+
+> O Windows pode avisar "O Windows protegeu o computador" na primeira vez,
+> porque o executável não tem assinatura digital (custa dinheiro e não faz
+> sentido para um projeto pessoal). Clique em **Mais informações › Executar
+> assim mesmo**. É um `.exe` pequeno (17 KB) compilado deste mesmo repositório
+> — o código-fonte está em `tools/launcher/Launcher.cs`, dá para ler e
+> recompilar você mesmo com `tools/build-launcher.ps1`.
+>
+> Se preferir não rodar um `.exe` desconhecido, `iniciar-bandeja.vbs` faz
+> exatamente a mesma coisa (é texto puro, dá pra abrir num editor e ler).
+
+O menu do ícone:
+
+| Item | O que faz |
+|---|---|
+| **Abrir painel** | abre o endereço do Deck Control no navegador |
+| Iniciar / Parar servidor | liga ou desliga o servidor |
+| Reiniciar servidor | para e liga de novo (por exemplo, depois de mudar a porta) |
+| Copiar endereço da rede | copia o link Wi-Fi para a área de transferência |
+| Abrir pasta de dados | abre `server/data` no Explorer |
+| Ver log | abre a saída do servidor no Bloco de Notas |
+| Iniciar com o Windows | liga o ícone da bandeja sozinho a cada logon |
+| Sair (não para o servidor) | fecha só o ícone — o servidor continua rodando |
+
+O ícone muda de cor (colorido = rodando, cinza = parado) e mostra um aviso
+quando o servidor fica pronto, para ou cai inesperadamente.
+
+Se o servidor já estiver rodando por fora — por exemplo, você abriu
+`iniciar.bat` antes — a bandeja detecta sozinha e passa a controlá-lo, sem
+abrir uma segunda instância.
+
+**"Parar servidor" desliga de verdade** (salva perfis e configuração antes de
+sair) porque conversa com o próprio servidor pela rede — um processo sem
+janela não recebe Ctrl+C, então fechar ali é sempre gracioso, nunca um
+encerramento forçado. Só nos casos raros em que o servidor trava é que a
+bandeja força o encerramento depois de alguns segundos de espera.
+
 ---
 
 ## Os dois modos de conexão
@@ -97,7 +148,9 @@ Instalação em 2 minutos: **[docs/SENSORES.md](docs/SENSORES.md)**.
 
 ```
 stream-app/
-├── iniciar.bat              inicia o servidor
+├── iniciar.bat              inicia o servidor (com terminal visível)
+├── Deck Control.exe         inicia na bandeja do sistema (compilado, sem terminal)
+├── iniciar-bandeja.vbs      mesma coisa que o .exe, como script
 ├── server/
 │   ├── src/
 │   │   ├── main.js          raiz de composição (monta o grafo de objetos)
@@ -113,7 +166,8 @@ stream-app/
 │   ├── public/              interface (PWA, sem dependências externas)
 │   └── data/                configuração, perfis e mídia — seus arquivos
 ├── android/                 projeto do APK (WebView + descoberta)
-├── tools/                   usb-connect.ps1, instalar-servico.ps1
+├── tools/                   tray.ps1, usb-connect.ps1, instalar-servico.ps1,
+│                            build-launcher.ps1 + launcher/ (fonte do .exe)
 └── docs/
 ```
 
@@ -159,3 +213,13 @@ Esperado sem o LibreHardwareMonitor. Veja [docs/SENSORES.md](docs/SENSORES.md).
 **Brilho aparece como "n/d".**
 Controle por software só existe em telas internas (notebooks) e em monitores
 com DDC/CI. Em desktop com monitor externo comum, não há como.
+
+**Não acho o ícone da bandeja.**
+O Windows costuma esconder ícones novos atrás da setinha `^`, perto do
+relógio. Clique nela e arraste o ícone do Deck Control para fora, se quiser
+deixá-lo sempre visível.
+
+**O Windows/antivírus avisa sobre `iniciar-bandeja.vbs` ou `tray.ps1`.**
+Normal para scripts baixados da internet sem assinatura digital — são texto
+puro, dá para abrir em qualquer editor e ler exatamente o que fazem. Escolha
+"Executar mesmo assim" ou libere no antivírus.

@@ -137,7 +137,8 @@ export class Application {
       router, config, profiles, registry, telemetry, obs,
       windows, audio, system, media, usb,
       bus: this.#bus,
-      gatewayInfo: () => gateway.clientsJSON()
+      gatewayInfo: () => gateway.clientsJSON(),
+      requestShutdown: (reason) => this.#shutdown(reason)
     });
     api.register();
 
@@ -177,41 +178,46 @@ export class Application {
   }
 
   #installShutdownHooks() {
-    const shutdown = async (signal) => {
-      if (this.#shuttingDown) return;
-      this.#shuttingDown = true;
-      this.#logger.info(`${signal} recebido, encerrando`);
-
-      // Persistir primeiro: perder a configuracao do usuario seria o pior
-      // resultado possivel de um desligamento.
-      this.#services.config?.flushSync();
-      this.#services.profiles?.flushSync();
-
-      const closers = [
-        () => this.#services.telemetry?.stop(),
-        () => this.#services.usb?.teardown(),
-        () => this.#services.discovery?.stop(),
-        () => this.#services.gateway?.close(),
-        () => this.#services.httpServer?.close(),
-        () => this.#services.obs?.dispose(),
-        () => this.#services.host?.stop()
-      ];
-      for (const close of closers) {
-        await Promise.resolve().then(close).catch(() => {});
-      }
-
-      this.#logger.info('encerrado');
-      process.exit(0);
-    };
-
-    process.on('SIGINT', () => void shutdown('SIGINT'));
-    process.on('SIGTERM', () => void shutdown('SIGTERM'));
+    process.on('SIGINT', () => void this.#shutdown('SIGINT'));
+    process.on('SIGTERM', () => void this.#shutdown('SIGTERM'));
     process.on('uncaughtException', (err) => {
       this.#logger.error('excecao nao tratada', err);
     });
     process.on('unhandledRejection', (reason) => {
       this.#logger.error('promessa rejeitada sem tratamento', reason);
     });
+  }
+
+  /**
+   * Encerramento gracioso, compartilhado pelos sinais do SO e pela rota
+   * `POST /api/system/shutdown` (usada pelo aplicativo de bandeja do Windows,
+   * que nao tem como mandar um Ctrl+C para um processo sem console).
+   */
+  async #shutdown(reason) {
+    if (this.#shuttingDown) return;
+    this.#shuttingDown = true;
+    this.#logger.info(`${reason} recebido, encerrando`);
+
+    // Persistir primeiro: perder a configuracao do usuario seria o pior
+    // resultado possivel de um desligamento.
+    this.#services.config?.flushSync();
+    this.#services.profiles?.flushSync();
+
+    const closers = [
+      () => this.#services.telemetry?.stop(),
+      () => this.#services.usb?.teardown(),
+      () => this.#services.discovery?.stop(),
+      () => this.#services.gateway?.close(),
+      () => this.#services.httpServer?.close(),
+      () => this.#services.obs?.dispose(),
+      () => this.#services.host?.stop()
+    ];
+    for (const close of closers) {
+      await Promise.resolve().then(close).catch(() => {});
+    }
+
+    this.#logger.info('encerrado');
+    process.exit(0);
   }
 }
 
