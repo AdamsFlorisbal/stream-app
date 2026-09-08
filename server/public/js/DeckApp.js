@@ -29,11 +29,16 @@ export class DeckApp {
   #dialTimer = null;
   #recordStartedAt = null;
   #recordTimer = null;
+  #clockTimer = null;
+
+  #dateFormatter = new Intl.DateTimeFormat('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' });
 
   constructor() {
     this.#dom = {
       shell: document.getElementById('shell'),
       hostName: document.getElementById('hostName'),
+      clockTime: document.getElementById('clockTime'),
+      clockDate: document.getElementById('clockDate'),
       badgeLink: document.getElementById('badgeLink'),
       badgeObs: document.getElementById('badgeObs'),
       badgeLive: document.getElementById('badgeLive'),
@@ -83,6 +88,7 @@ export class DeckApp {
     }
 
     this.#startDialRefresh();
+    this.#startClock();
     return this;
   }
 
@@ -427,6 +433,20 @@ export class DeckApp {
     clearInterval(this.#recordTimer);
     this.#recordTimer = null;
     this.#dom.recTimer.textContent = '00:00';
+  }
+
+  #startClock() {
+    const tick = () => {
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, '0');
+      const mm = String(now.getMinutes()).padStart(2, '0');
+      const ss = String(now.getSeconds()).padStart(2, '0');
+      this.#dom.clockTime.textContent = `${hh}:${mm}:${ss}`;
+      const date = this.#dateFormatter.format(now).replace(/\./g, '');
+      this.#dom.clockDate.textContent = date.charAt(0).toUpperCase() + date.slice(1);
+    };
+    tick();
+    this.#clockTimer = setInterval(tick, 1000);
   }
 
   // --- Knobs --------------------------------------------------------------
